@@ -86,4 +86,4 @@ class PermissionMixin:
 
 class TenantMixin:
     def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(tenant=self.request.user.tenant)
+        return self.queryset.filter(tenant_id=self.request.user.tenant_id)
