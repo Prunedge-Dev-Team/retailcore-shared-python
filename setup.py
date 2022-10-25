@@ -13,6 +13,9 @@ setuptools.setup(
     long_description=description,
     long_description_content_type="text/markdown",
     include_package_data=True,
+    package_data={
+        'sterling_shared': ['templates/*']
+    },
     url="https://github.com/Prunedge-Dev-Team/retailcore-shared-python.git",
     license='MIT',
     python_requires='>=3.8',
