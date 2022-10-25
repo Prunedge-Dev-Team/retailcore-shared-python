@@ -43,7 +43,9 @@ class UserAuthMixin:
         auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10060')
         auth_decode_url = f'{auth_service_url}/api/v1/auth/token/decode/'
         headers = {
+            'Accept': 'application/json',
             'Authorization': 'Bearer {}'.format(token),
+            'Content-Type': 'application/json'
         }
         data = {'token': token}
         # try:
@@ -57,7 +59,7 @@ class UserAuthMixin:
         print(auth_decode_url)
         try:
 
-            res = requests.post(auth_decode_url, data=data, headers=headers)
+            res = requests.post(auth_decode_url, json=data, headers=headers)
         except Exception as e:
             print(e)
             print(str(e))
