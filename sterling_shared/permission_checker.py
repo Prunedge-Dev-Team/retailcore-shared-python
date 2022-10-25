@@ -40,8 +40,8 @@ class UserAuthMixin:
 
     @staticmethod
     def get_auth_user(request):
-        if request.user.is_authenticated:
-            return
+        # if request.user.is_authenticated:
+        #     return
         token = request.META.get("HTTP_AUTHORIZATION")
         if token is None:
             raise AuthenticationFailed
