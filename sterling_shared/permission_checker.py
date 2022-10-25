@@ -48,6 +48,7 @@ class UserAuthMixin:
             'Content-Type': 'application/json'
         }
         data = {'token': token}
+        print(token)
         # try:
         #
         # except requests.ConnectionError as err:
