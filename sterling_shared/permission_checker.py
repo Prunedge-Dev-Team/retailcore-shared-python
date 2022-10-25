@@ -40,8 +40,8 @@ class UserAuthMixin:
 
     @staticmethod
     def get_auth_user(request):
-        # if request.user.is_authenticated:
-        #     return
+        if request.user.is_authenticated:
+            return
         token = request.META.get("HTTP_AUTHORIZATION")
         if token is None:
             raise AuthenticationFailed
@@ -55,14 +55,20 @@ class UserAuthMixin:
         data = {'token': token}
         try:
             res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
-            request.user = UserData(res.json())
+
         except requests.ConnectionError as err:
             raise serializers.ValidationError(f"Cannot establish connection: {err}") from err
 
         except requests.HTTPError as err:
             raise serializers.ValidationError(f"HTTP Error: {err}") from err
         except Exception as err:
+            print(err)
             raise serializers.ValidationError(f"Error occurred: {err}") from err
+
+        if 200 <= res.status_code < 300:
+            request.user = UserData(res.json())
+        else:
+            raise AuthenticationFailed
 
 
 class PermissionMixin:
