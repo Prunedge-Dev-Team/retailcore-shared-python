@@ -39,7 +39,7 @@ class UserAuthMixin:
 
     @staticmethod
     def get_auth_user(request):
-        token = request.META.get("HTTP_AUTHORIZATION")
+        token = request.META.get("HTTP_AUTHORIZATION").split()[1]
         auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10060')
         auth_decode_url = f'{auth_service_url}/api/v1/auth/decode/'
         headers = {
