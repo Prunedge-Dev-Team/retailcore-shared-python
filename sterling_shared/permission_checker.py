@@ -55,7 +55,12 @@ class UserAuthMixin:
         # except Exception as err:
         #     raise serializers.ValidationError(f"Error occurred: {err}")
         print(auth_decode_url)
-        res = requests.post(auth_decode_url, data=data, headers=headers)
+        try:
+
+            res = requests.post(auth_decode_url, data=data, headers=headers)
+        except Exception as e:
+            print(e)
+            print(str(e))
 
         print(res.text)
         print(res.content)
