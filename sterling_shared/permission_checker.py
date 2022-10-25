@@ -58,8 +58,8 @@ class UserAuthMixin:
         res = requests.post(auth_decode_url, data=data, headers=headers)
 
         print(res.text)
-        print(res.json())
         print(res.content)
+        print(res.json())
         user_data = json.loads(res.text)
         request.user = UserData(user_data)
 
