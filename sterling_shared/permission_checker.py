@@ -46,16 +46,17 @@ class UserAuthMixin:
             'Authorization': 'Bearer {}'.format(token),
         }
         data = {'token': token}
-        try:
-            print(auth_decode_url)
-            res = requests.post(auth_decode_url, data=data, headers=headers)
+        # try:
+        #
+        # except requests.ConnectionError as err:
+        #     raise serializers.ValidationError(f"Cannot establish connection: {err}")
+        # except requests.HTTPError as err:
+        #     raise serializers.ValidationError(f"HTTP Error: {err}")
+        # except Exception as err:
+        #     raise serializers.ValidationError(f"Error occurred: {err}")
+        print(auth_decode_url)
+        res = requests.post(auth_decode_url, data=data, headers=headers)
 
-        except requests.ConnectionError as err:
-            raise serializers.ValidationError(f"Cannot establish connection: {err}")
-        except requests.HTTPError as err:
-            raise serializers.ValidationError(f"HTTP Error: {err}")
-        except Exception as err:
-            raise serializers.ValidationError(f"Error occurred: {err}")
         print(res.text)
         user_data = json.loads(res.text)
         request.user = UserData(user_data)
