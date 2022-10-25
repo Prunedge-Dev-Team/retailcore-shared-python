@@ -59,7 +59,7 @@ class UserAuthMixin:
         print(auth_decode_url)
         try:
 
-            res = requests.post(auth_decode_url, json=data, headers=headers)
+            res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
         except Exception as e:
             print(e)
             print(str(e))
