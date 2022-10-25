@@ -41,7 +41,7 @@ class UserAuthMixin:
     def get_auth_user(request):
         token = request.META.get("HTTP_AUTHORIZATION")
         auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10060')
-        auth_decode_url = f'{auth_service_url}/api/v1/auth/token/decode/'
+        auth_decode_url = f'{auth_service_url}/api/v1/auth/decode/'
         headers = {
             'Accept': 'application/json',
             'Authorization': 'Bearer {}'.format(token),
@@ -57,12 +57,9 @@ class UserAuthMixin:
         # except Exception as err:
         #     raise serializers.ValidationError(f"Error occurred: {err}")
         print(auth_decode_url)
-        try:
 
-            res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
-        except Exception as e:
-            print(e)
-            print(str(e))
+        res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
+
 
         print(res.text)
         print(res.content)
