@@ -30,6 +30,7 @@ def check_user_has_permissions(user, perms):
 
 class UserData(object):
     is_authenticated = True
+
     def __init__(self, my_dict):
         for key in my_dict:
             setattr(self, key, my_dict[key])
@@ -39,34 +40,29 @@ class UserAuthMixin:
 
     @staticmethod
     def get_auth_user(request):
-        token = request.META.get("HTTP_AUTHORIZATION").split()[1]
+        if request.user and request.user.is_authenticated:
+            return
+        token = request.META.get("HTTP_AUTHORIZATION")
+        if token is None:
+            raise AuthenticationFailed
+        token = token.split()
+        if len(token) < 2:
+            raise serializers.ValidationError("Token format error")
+        token = token[1]
         auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10060')
         auth_decode_url = f'{auth_service_url}/api/v1/auth/decode/'
-        headers = {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer {}'.format(token),
-            'Content-Type': 'application/json'
-        }
+        headers = {'Accept': 'application/json', 'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
         data = {'token': token}
-        print(token)
-        # try:
-        #
-        # except requests.ConnectionError as err:
-        #     raise serializers.ValidationError(f"Cannot establish connection: {err}")
-        # except requests.HTTPError as err:
-        #     raise serializers.ValidationError(f"HTTP Error: {err}")
-        # except Exception as err:
-        #     raise serializers.ValidationError(f"Error occurred: {err}")
-        print(auth_decode_url)
+        try:
+            res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
+            request.user = UserData(res.json())
+        except requests.ConnectionError as err:
+            raise serializers.ValidationError(f"Cannot establish connection: {err}") from err
 
-        res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
-
-
-        print(res.text)
-        print(res.content)
-        print(res.json())
-        user_data = json.loads(res.text)
-        request.user = UserData(user_data)
+        except requests.HTTPError as err:
+            raise serializers.ValidationError(f"HTTP Error: {err}") from err
+        except Exception as err:
+            raise serializers.ValidationError(f"Error occurred: {err}") from err
 
 
 class PermissionMixin:
