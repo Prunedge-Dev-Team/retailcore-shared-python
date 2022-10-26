@@ -3,6 +3,7 @@ import requests
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework import serializers
+from drf_spectacular.contrib.rest_framework_simplejwt import SimpleJWTScheme
 
 
 class UserData(object):
@@ -39,3 +40,7 @@ def get_auth_user(token):
 class CustomJWTAuthentication(JWTAuthentication):
     def get_user(self, validated_token):
         return get_auth_user(validated_token)
+
+
+class CustomJWTAuthenticationScheme(SimpleJWTScheme):
+    target_class = CustomJWTAuthentication
