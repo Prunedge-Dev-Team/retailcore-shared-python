@@ -5,7 +5,6 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework import serializers
 from drf_spectacular.contrib.rest_framework_simplejwt import SimpleJWTScheme
 
-
 class UserData(object):
     is_authenticated = True
 
@@ -18,7 +17,7 @@ def get_auth_user(token):
     auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10060')
     auth_decode_url = f'{auth_service_url}/api/v1/auth/decode/'
     headers = {'Accept': 'application/json', 'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
-    data = {'token': token}
+    data = {'token': str(token)}
     try:
         res = requests.request(method="POST", url=auth_decode_url, json=data, headers=headers)
 
