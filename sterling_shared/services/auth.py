@@ -1,2 +1,19 @@
-class AuthService:
-    pass
+import os
+
+from sterling_shared.services.base import BaseRequest
+
+
+class AuthService(BaseRequest):
+    base_url = f"{os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050')}/api/v1"
+
+    def get_users_by_ids(self, ids: list):
+        string_ids = ",".join(ids)
+        path = f'users/fetch/by-id/?id={string_ids}'
+        users = self.send_request("GET", path)
+        return users['data']
+
+    def get_users_by_permissions(self, permissions: list):
+        string_permissions = ",".join(permissions)
+        path = f'users/fetch/by-permission/?permissions={string_permissions}'
+        users = self.send_request("GET", path)
+        return users['data']
