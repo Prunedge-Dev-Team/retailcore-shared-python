@@ -40,9 +40,9 @@ class ValidationErrorMiddleware:
                 errors = data
                 if errors.get('detail'):
                     errors = errors.get('detail')
-                if errors.get('errors'):
+                elif errors.get('errors'):
                     errors = errors.get('errors')
-                if errors.get('error'):
+                elif errors.get('error'):
                     errors = errors.get('error')
                 data = {"success": False, "errors": errors}
 
