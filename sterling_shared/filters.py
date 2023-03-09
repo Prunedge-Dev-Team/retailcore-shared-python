@@ -3,7 +3,7 @@ from datetime import datetime, time
 import django_filters
 from django.db.models import QuerySet
 
-from sterling_shared.enums import INITIATED_BY_FILTER_CHOICES_ENUMS
+from sterling_shared.enums import INITIATED_BY_FILTER_CHOICES_ENUMS, APPROVED_BY_FILTER_CHOICES_ENUMS
 
 
 class DateFilter(django_filters.FilterSet):
@@ -23,7 +23,7 @@ class DateFilter(django_filters.FilterSet):
 
 class StatsFilter(DateFilter):
     initiated_by = django_filters.ChoiceFilter(choices=INITIATED_BY_FILTER_CHOICES_ENUMS, method="filter_initiated_by")
-    sent_to = django_filters.ChoiceFilter(choices=INITIATED_BY_FILTER_CHOICES_ENUMS, method="filter_sent_to")
+    sent_to = django_filters.ChoiceFilter(choices=APPROVED_BY_FILTER_CHOICES_ENUMS, method="filter_sent_to")
 
     def filter_initiated_by(self, queryset, name, value):
         if value == "ME":
