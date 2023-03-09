@@ -23,9 +23,15 @@ class DateFilter(django_filters.FilterSet):
 
 class StatsFilter(DateFilter):
     initiated_by = django_filters.ChoiceFilter(choices=INITIATED_BY_FILTER_CHOICES_ENUMS, method="filter_initiated_by")
+    sent_to = django_filters.ChoiceFilter(choices=INITIATED_BY_FILTER_CHOICES_ENUMS, method="filter_sent_to")
 
     def filter_initiated_by(self, queryset, name, value):
         if value == "ME":
             queryset = queryset.filter(initiator=self.request.user.id)
+        return queryset
+
+    def filter_sent_to(self, queryset, name, value):
+        if value == "ME":
+            queryset = queryset.filter(approved_by=self.request.user.id)
         return queryset
 
