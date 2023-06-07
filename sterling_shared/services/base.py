@@ -23,8 +23,9 @@ class BaseRequest:
             print(path)
             print(self.token)
             print("GETTING PAYLOAD")
-            print(res.text)
             res = requests.request(method=method, url=f"{self.base_url}/{path}", json=data, headers=headers)
+            print(res.text)
+            print(type(res))
         except Exception as err:
             print("ERROR from exception")
             print(f"EXCEPTION::: {err}")
