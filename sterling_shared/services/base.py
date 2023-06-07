@@ -19,6 +19,8 @@ class BaseRequest:
         headers = {'Accept': 'application/json', 'Authorization': f'Bearer {str(self.token)}',
                    'Content-Type': 'application/json'}
         try:
+            print(self.base_url)
+            print(path)
             res = requests.request(method=method, url=f"{self.base_url}/{path}", json=data, headers=headers)
         except Exception as err:
             raise Exception(f"Error occurred: {err}") from err
