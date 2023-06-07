@@ -19,21 +19,10 @@ class BaseRequest:
         headers = {'Accept': 'application/json', 'Authorization': f'Bearer {str(self.token)}',
                    'Content-Type': 'application/json'}
         try:
-            print(self.base_url)
-            print(path)
-            print(self.token)
-            print("GETTING PAYLOAD")
             res = requests.request(method=method, url=f"{self.base_url}/{path}", json=data, headers=headers)
-            print(res.text)
-            print(type(res))
         except Exception as err:
-            print("ERROR from exception")
-            print(f"EXCEPTION::: {err}")
             raise Exception(f"Error occurred: {err}") from err
-        print(f"GOT result: {res}")
         if 200 <= res.status_code < 300:
-            print(f"AUTH SERVICE SUCCESSFUL: {res}")
             return res.json()
         else:
-            print(f"AUTH SERVICE FETCH NOT SUCCESSFUL: {res}")
             raise Exception(f"Error occurred: {res.json()}")
