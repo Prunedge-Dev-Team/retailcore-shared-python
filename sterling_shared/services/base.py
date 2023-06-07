@@ -20,6 +20,7 @@ class BaseRequest:
                    'Content-Type': 'application/json'}
         try:
             print(self.base_url)
+            print(path)
             print(self.token)
             print("GETTING PAYLOAD")
             res = requests.request(method=method, url=f"{self.base_url}/{path}", json=data, headers=headers)
