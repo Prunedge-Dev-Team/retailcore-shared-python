@@ -25,4 +25,4 @@ class BaseRequest:
         if 200 <= res.status_code < 300:
             return res.json()
         else:
-            raise Exception(f"Error occurred: {res.json()}")
+            raise Exception(f"Error occurred: {res.text}")
