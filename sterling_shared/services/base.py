@@ -20,8 +20,11 @@ class BaseRequest:
                    'Content-Type': 'application/json'}
         try:
 
+            print("GETTING PAYLOAD")
             res = requests.request(method=method, url=f"{self.base_url}/{path}", json=data, headers=headers)
         except Exception as err:
+            print("ERROR from exception")
+            print(f"EXCEPTION::: {err}")
             raise Exception(f"Error occurred: {err}") from err
         print(f"GOT result: {res}")
         if 200 <= res.status_code < 300:
