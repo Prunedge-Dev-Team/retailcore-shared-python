@@ -38,7 +38,7 @@ def check_user_has_permissions(request, perms, auth_service_url):
             if response.status_code == 200 and response.json()['success']:
                 return True
             return response.json()
-        raise PermissionDenied
+        # raise PermissionDenied
 
 
 class PermissionMixin:
