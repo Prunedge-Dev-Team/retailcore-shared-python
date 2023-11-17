@@ -14,7 +14,7 @@ def get_user_permissions(user):
     raise AuthenticationFailed
 
 
-def check_user_has_permissions(request, perms, auth_service_url):
+def check_user_has_permissions(request, perms):
     user = request.user
     """
     Function to check if a user has any of the permissions passed.
@@ -27,7 +27,7 @@ def check_user_has_permissions(request, perms, auth_service_url):
 
     if user.is_admin is False and perms and check_perm(user_permissions) is False:
         if user.is_admin is False and perms and check_perm(user_permissions) is False:
-            if 'X-S2S-API-KEY' in request.headers and auth_service_url:
+            if 'X-S2S-API-KEY' in request.headers:
                 third_party_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050') + "/api/v1/service-auth/verify-header-key/"
                 json_payload = json.dumps({'api_key': request.headers.get('X-S2S-API-KEY')})
                 headers = {
@@ -46,10 +46,9 @@ class PermissionMixin:
     Custom Permission mixin
     """
     custom_permissions = None
-    auth_service_url = None
 
     def check_permissions(self, request):
-        check_user_has_permissions(request, self.get_custom_permissions(), self.auth_service_url)
+        check_user_has_permissions(request, self.get_custom_permissions())
         return super().check_permissions(request)
 
     def get_custom_permissions(self):
