@@ -26,19 +26,19 @@ def check_user_has_permissions(request, perms, auth_service_url):
         return any(_perm in perm_list for _perm in perms)
 
     if user.is_admin is False and perms and check_perm(user_permissions) is False:
-        if 'X-Header-Service-Auth' in request.headers and auth_service_url:
-            params = request.GET if request.method == 'GET' else request.POST
-            third_party_url = auth_service_url + "/api/v1/service-auth/verify-header-key/"
-            json_payload = json.dumps({'api_key': request.headers.get('X-Header-Service-Auth')})
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': request.headers.get('Authorization'),
-            }
-            response = requests.get(third_party_url, data=json_payload, headers=headers, params=params)
-            if response.status_code == 200 and response.json()['success']:
-                return True
-            return response.json()
-        # raise PermissionDenied
+        if user.is_admin is False and perms and check_perm(user_permissions) is False:
+            if 'X-S2S-API-KEY' in request.headers and auth_service_url:
+                third_party_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050') + "/api/v1/service-auth/verify-header-key/"
+                json_payload = json.dumps({'api_key': request.headers.get('X-S2S-API-KEY')})
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': request.headers.get('Authorization'),
+                }
+                response = requests.post(third_party_url, data=json_payload, headers=headers)
+                if response.status_code == 200 and response.json()['success']:
+                    return True
+        raise PermissionDenied
+
 
 
 class PermissionMixin:
