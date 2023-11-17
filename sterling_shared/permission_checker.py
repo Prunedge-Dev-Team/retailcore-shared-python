@@ -34,6 +34,9 @@ def check_user_has_permissions(request, perms, auth_service_url):
                 'Authorization': request.headers.get('Authorization'),
             }
             response = requests.get(third_party_url, data=json_payload, headers=headers, params=params)
+            print(response)
+            print(response.status_code)
+            print(json_payload)
             if response.status_code == 200 and response.json()['success']:
                 return True
         raise PermissionDenied
