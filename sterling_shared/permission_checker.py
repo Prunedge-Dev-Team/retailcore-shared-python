@@ -20,6 +20,7 @@ def check_user_has_permissions(request, perms, auth_service_url):
     Function to check if a user has any of the permissions passed.
     """
     user_permissions = get_user_permissions(user)
+    
 
     def check_perm(perm_list):
         return any(_perm in perm_list for _perm in perms)
@@ -37,6 +38,7 @@ def check_user_has_permissions(request, perms, auth_service_url):
                 if response.status_code == 200 and response.json()['success']:
                     return True
         raise PermissionDenied
+
 
 
 class PermissionMixin:
