@@ -24,12 +24,13 @@ def check_user_has_permissions(request, perms):
 
     def check_perm(perm_list):
         return any(_perm in perm_list for _perm in perms)
-
+   
+    
     if user.is_admin is False and perms and check_perm(user_permissions) is False:
         if user.is_admin is False and perms and check_perm(user_permissions) is False:
-            if 'X-S2S-API-KEY' in request.headers:
+            if 'x-s2s-api-key' in request.headers:
                 third_party_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050') + "/api/v1/service-auth/verify-header-key/"
-                json_payload = json.dumps({'api_key': request.headers.get('X-S2S-API-KEY')})
+                json_payload = json.dumps({'api_key': request.headers.get('x-s2s-api-key')})
                 headers = {
                     'Content-Type': 'application/json',
                     'Authorization': request.headers.get('Authorization'),
