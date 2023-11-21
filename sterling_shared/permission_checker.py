@@ -5,6 +5,14 @@ from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 import requests
 
 
+class CaseInsensitiveDict(dict):
+    def __getitem__(self, key):
+        for k in self.keys():
+            if k.lower() == key.lower():
+                return super().__getitem__(k)
+        raise KeyError(key)
+
+
 def get_user_permissions(user):
     """
     Fetch all permissions a user has
@@ -20,32 +28,39 @@ def check_user_has_permissions(request, perms):
     Function to check if a user has any of the permissions passed.
     """
     user_permissions = get_user_permissions(user)
-    
 
     def check_perm(perm_list):
         return any(_perm in perm_list for _perm in perms)
-   
-    
+
     if user.is_admin is False and perms and check_perm(user_permissions) is False:
         if user.is_admin is False and perms and check_perm(user_permissions) is False:
-            if 'x-s2s-api-key' in request.headers:
-                third_party_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050') + "/api/v1/service-auth/verify-header-key/"
-                json_payload = json.dumps({'api_key': request.headers.get('x-s2s-api-key')})
+            http_headers = CaseInsensitiveDict(request.headers)
+
+            if "X-S2S-Api-Key" in http_headers:
+                third_party_url = (
+                    os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
+                    + "/api/v1/service-auth/verify-header-key/"
+                )
+                json_payload = json.dumps(
+                    {"api_key": http_headers.get("X-S2S-Api-Key")}
+                )
                 headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': request.headers.get('Authorization'),
+                    "Content-Type": "application/json",
+                    "Authorization": request.headers.get("Authorization"),
                 }
-                response = requests.post(third_party_url, data=json_payload, headers=headers)
-                if response.status_code == 200 and response.json()['success']:
+                response = requests.post(
+                    third_party_url, data=json_payload, headers=headers
+                )
+                if response.status_code == 200 and response.json()["success"]:
                     return True
         raise PermissionDenied
-
 
 
 class PermissionMixin:
     """
     Custom Permission mixin
     """
+
     custom_permissions = None
 
     def check_permissions(self, request):
