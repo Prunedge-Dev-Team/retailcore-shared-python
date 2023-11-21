@@ -44,13 +44,13 @@ def check_user_has_permissions(request, perms):
         if user.is_admin is False and perms and check_perm(user_permissions) is False:
             http_headers = CaseInsensitiveDict(request.headers)
 
-            if "X-S2S-Api-Key" in http_headers:
+            if "X-S2s-Api-Key" in http_headers:
                 third_party_url = (
                     os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
                     + "/api/v1/service-auth/verify-header-key/"
                 )
                 json_payload = json.dumps(
-                    {"api_key": http_headers.get("X-S2S-Api-Key")}
+                    {"api_key": http_headers.get("X-S2s-Api-Key")}
                 )
                 headers = {
                     "Content-Type": "application/json",
