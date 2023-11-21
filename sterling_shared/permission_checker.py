@@ -3,15 +3,23 @@ import os
 
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 import requests
+from collections.abc import Mapping
 
 
-class CaseInsensitiveDict(dict):
+
+class CaseInsensitiveDict(Mapping):
+    def __init__(self, data):
+        self._data = {key.lower(): value for key, value in data.items()}
+
     def __getitem__(self, key):
-        for k in self.keys():
-            if k.lower() == key.lower():
-                return super().__getitem__(k)
-        raise KeyError(key)
+        return self._data[key.lower()]
 
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+    
 
 def get_user_permissions(user):
     """
