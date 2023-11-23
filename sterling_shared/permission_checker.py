@@ -25,8 +25,11 @@ def get_user_permissions(user):
     """
     Fetch all permissions a user has
     """
-    if user.is_authenticated:
-        return user.permissions
+    try:
+        if user.is_authenticated:
+            return user.permissions
+    except Exception as e:
+        pass
     raise AuthenticationFailed
 
 
@@ -46,8 +49,8 @@ def check_user_has_permissions(request, perms):
 
             if "X-S2s-Api-Key" in http_headers:
                 third_party_url = (
-                    os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
-                    + "/api/v1/service-auth/verify-header-key/"
+                        os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
+                        + "/api/v1/service-auth/verify-header-key/"
                 )
                 json_payload = json.dumps(
                     {"api_key": http_headers.get("X-S2s-Api-Key")}
