@@ -61,8 +61,15 @@ def check_user_has_permissions(request, perms):
                 third_party_url, data=json_payload, headers=headers
             )
             if response.status_code == 200 and response.json()["success"]:
-                return request
+                return True
         raise PermissionDenied
+
+
+def upgrade_request_to_admin(request):
+    req = request
+    req.user.is_admin = True
+    req.user.is_superuser = True
+    return req
 
 
 class PermissionMixin:
@@ -73,12 +80,9 @@ class PermissionMixin:
     custom_permissions = None
 
     def check_permissions(self, request):
-        check_resp = check_user_has_permissions(request, self.get_custom_permissions())
-        if type(check_resp) == Request:
-            new_request = check_resp
-            new_request.user.is_admin = True
-            new_request.user.is_superuser = True
-            return super().check_permissions(new_request)
+        is_valid_key = check_user_has_permissions(request, self.get_custom_permissions())
+        if is_valid_key:
+            return super().check_permissions(upgrade_request_to_admin(request))
         return super().check_permissions(request)
 
     def get_custom_permissions(self):
