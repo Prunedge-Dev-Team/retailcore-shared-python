@@ -4,7 +4,7 @@ import os
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 import requests
 from collections.abc import Mapping
-
+from rest_framework.request import Request
 
 
 class CaseInsensitiveDict(Mapping):
@@ -44,26 +44,24 @@ def check_user_has_permissions(request, perms):
         return any(_perm in perm_list for _perm in perms)
 
     if user.is_admin is False and perms and check_perm(user_permissions) is False:
-        if user.is_admin is False and perms and check_perm(user_permissions) is False:
-            http_headers = CaseInsensitiveDict(request.headers)
-
-            if "X-S2s-Api-Key" in http_headers:
-                third_party_url = (
-                        os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
-                        + "/api/v1/service-auth/verify-header-key/"
-                )
-                json_payload = json.dumps(
-                    {"api_key": http_headers.get("X-S2s-Api-Key")}
-                )
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": request.headers.get("Authorization"),
-                }
-                response = requests.post(
-                    third_party_url, data=json_payload, headers=headers
-                )
-                if response.status_code == 200 and response.json()["success"]:
-                    return True
+        http_headers = CaseInsensitiveDict(request.headers)
+        if "X-S2s-Api-Key" in http_headers:
+            third_party_url = (
+                    os.getenv("AUTH_SERVICE_URL", "http://localhost:10050")
+                    + "/api/v1/service-auth/verify-header-key/"
+            )
+            json_payload = json.dumps(
+                {"api_key": http_headers.get("X-S2s-Api-Key")}
+            )
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": request.headers.get("Authorization"),
+            }
+            response = requests.post(
+                third_party_url, data=json_payload, headers=headers
+            )
+            if response.status_code == 200 and response.json()["success"]:
+                return request
         raise PermissionDenied
 
 
@@ -75,7 +73,12 @@ class PermissionMixin:
     custom_permissions = None
 
     def check_permissions(self, request):
-        check_user_has_permissions(request, self.get_custom_permissions())
+        check_resp = check_user_has_permissions(request, self.get_custom_permissions())
+        if type(check_resp) == Request:
+            new_request = check_resp
+            new_request.user.is_admin = True
+            new_request.user.is_superuser = True
+            return super().check_permissions(new_request)
         return super().check_permissions(request)
 
     def get_custom_permissions(self):
