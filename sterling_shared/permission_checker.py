@@ -4,7 +4,6 @@ import os
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 import requests
 from collections.abc import Mapping
-from rest_framework.request import Request
 
 
 class CaseInsensitiveDict(Mapping):
