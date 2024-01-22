@@ -8,9 +8,7 @@ class AuthService(BaseRequest):
 
     def __init__(self, request):
         super().__init__(request)
-        base_url = os.getenv('AUTH_SERVICE_URL', None)
-        if base_url is None:
-            raise Exception("AUTH_SERVICE_URL environment variable not set")
+        base_url = f"{os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050')}/api/v1"
         self.base_url = f"{base_url}/api/v1"
 
     def get_user_by_id(self, id):
