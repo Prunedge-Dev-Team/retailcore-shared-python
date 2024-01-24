@@ -9,7 +9,7 @@ class AuthService(BaseRequest):
     def __init__(self, request):
         super().__init__(request)
         base_url = f"{os.getenv('AUTH_SERVICE_URL', 'http://localhost:10050')}/api/v1"
-        self.base_url = f"{base_url}/api/v1"
+        self.base_url = f"{base_url}"
 
     def get_user_by_id(self, id):
         path = f'users/{id}'
@@ -19,7 +19,7 @@ class AuthService(BaseRequest):
         string_ids = ",".join(ids)
         path = f'users/fetch/by-id/?id={string_ids}'
         users = self.send_request("GET", path)
-        if to_dict and users['data']:
+        if to_dict and users:
             return {x["id"]: x for x in users['data']}
         return users['data']
 
@@ -27,6 +27,6 @@ class AuthService(BaseRequest):
         string_permissions = ",".join(permissions)
         path = f'users/fetch/by-permission/?permissions={string_permissions}'
         users = self.send_request("GET", path)
-        if to_dict and users['data']:
+        if to_dict and users:
             return {x["id"]: x for x in users['data']}
         return users['data']
