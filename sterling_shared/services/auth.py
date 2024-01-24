@@ -19,7 +19,7 @@ class AuthService(BaseRequest):
         string_ids = ",".join(ids)
         path = f'users/fetch/by-id/?id={string_ids}'
         users = self.send_request("GET", path)
-        if to_dict and users:
+        if to_dict:
             return {x["id"]: x for x in users['data']}
         return users['data']
 
@@ -27,6 +27,6 @@ class AuthService(BaseRequest):
         string_permissions = ",".join(permissions)
         path = f'users/fetch/by-permission/?permissions={string_permissions}'
         users = self.send_request("GET", path)
-        if to_dict and users:
+        if to_dict:
             return {x["id"]: x for x in users['data']}
         return users['data']
