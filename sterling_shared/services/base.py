@@ -5,7 +5,11 @@ class BaseRequest:
     base_url = None
 
     def __init__(self, request):
-        header = request.META.get("HTTP_AUTHORIZATION", None)
+
+        if isinstance(request, dict):
+            header = request['headers']["Authorization"]
+        else:
+            header = request.META.get("HTTP_AUTHORIZATION", None)
         parts = header.split()
         if len(parts) == 0:
             raise Exception("Empty AUTHORIZATION header sent")
