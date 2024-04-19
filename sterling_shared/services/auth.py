@@ -30,3 +30,11 @@ class AuthService(BaseRequest):
         if to_dict:
             return {x["id"]: x for x in users['data']}
         return users['data']
+    
+    def get_users_by_username_or_email(self, username_or_email: list, to_dict: bool = False):
+        string_username_or_email = ",".join(username_or_email)
+        path = f'users/fetch/by/username-or-email/?username_or_email={string_username_or_email}'
+        users = self.send_request("GET", path)
+        if to_dict:
+            return {x["id"]: x for x in users['data']}
+        return users['data']
